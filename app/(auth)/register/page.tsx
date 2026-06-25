@@ -94,6 +94,22 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 className="h-12 border-brand-ivory-dark focus:border-brand-sage"
               />
+              {formData.password && (
+                <div className="mt-2 space-y-1">
+                  <p className={`text-[10px] flex items-center gap-1 ${formData.password.length >= 8 ? 'text-status-success' : 'text-brand-muted'}`}>
+                    <span className="text-[8px]">{formData.password.length >= 8 ? '✓' : '○'}</span> At least 8 characters
+                  </p>
+                  <p className={`text-[10px] flex items-center gap-1 ${/[A-Z]/.test(formData.password) ? 'text-status-success' : 'text-brand-muted'}`}>
+                    <span className="text-[8px]">{/[A-Z]/.test(formData.password) ? '✓' : '○'}</span> One uppercase letter
+                  </p>
+                  <p className={`text-[10px] flex items-center gap-1 ${/[a-z]/.test(formData.password) ? 'text-status-success' : 'text-brand-muted'}`}>
+                    <span className="text-[8px]">{/[a-z]/.test(formData.password) ? '✓' : '○'}</span> One lowercase letter
+                  </p>
+                  <p className={`text-[10px] flex items-center gap-1 ${/[0-9]/.test(formData.password) ? 'text-status-success' : 'text-brand-muted'}`}>
+                    <span className="text-[8px]">{/[0-9]/.test(formData.password) ? '✓' : '○'}</span> One number
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

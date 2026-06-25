@@ -37,9 +37,9 @@ export default function SettingsPage() {
     setIsSavingProfile(true);
     try {
       await api.put("/me", { firstName, lastName, phone });
-      // Show success toast here if toast was implemented globally
-    } catch (err) {
-      // Show error toast
+      toast.success("Profile updated successfully");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error?.message || "Failed to update profile");
     } finally {
       setIsSavingProfile(false);
     }
@@ -48,11 +48,13 @@ export default function SettingsPage() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setPasswordMessage("New passwords do not match.");
+      toast.error("New passwords do not match.");
       return;
     }
-    if (newPassword.length < 8) {
-      setPasswordMessage("Password must be at least 8 characters.");
+    
+    // Check complexity
+    if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      toast.error("Password must be at least 8 chars, contain an uppercase, lowercase, and a number.");
       return;
     }
     
@@ -63,9 +65,9 @@ export default function SettingsPage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setPasswordMessage("Password successfully updated.");
+      toast.success("Password successfully updated.");
     } catch (err: any) {
-      setPasswordMessage(err.response?.data?.error?.message || "Failed to update password.");
+      toast.error(err.response?.data?.error?.message || "Failed to update password.");
     } finally {
       setIsSavingPassword(false);
     }
