@@ -9,10 +9,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <div className="min-h-screen bg-brand-white flex">
-        <AdminSidebar />
+        <div className="print:hidden">
+          <AdminSidebar />
+        </div>
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <AdminTopbar />
-          <main className="flex-1 overflow-y-auto bg-brand-ivory/50">
+          <div className="print:hidden">
+            <AdminTopbar />
+          </div>
+          <main className="flex-1 overflow-y-auto bg-brand-ivory/50 print:bg-white print:overflow-visible">
             {children}
           </main>
         </div>

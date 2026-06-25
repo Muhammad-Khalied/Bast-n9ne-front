@@ -5,7 +5,7 @@ import api from "../../../../lib/api";
 import { 
   ArrowLeft, Package, User, MapPin, 
   CreditCard, Clock, Truck, CheckCircle, 
-  XCircle, AlertCircle, ExternalLink 
+  XCircle, AlertCircle, ExternalLink, Calendar
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
@@ -85,7 +85,7 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <Link href="/admin/orders" className="text-sm text-brand-muted hover:text-brand-sage flex items-center gap-2 mb-4 transition-colors">
+        <Link href="/admin/orders" className="text-sm text-brand-muted hover:text-brand-sage flex items-center gap-2 mb-4 transition-colors print:hidden">
           <ArrowLeft className="w-4 h-4" /> Back to Orders
         </Link>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -101,10 +101,13 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
                 {order.status}
               </div>
             </div>
-            <p className="text-sm text-brand-muted">Placed on {new Date(order.createdAt).toLocaleString()}</p>
+            <p className="text-sm text-brand-muted flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              {new Date(order.createdAt).toLocaleString()}
+            </p>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3 print:hidden">
             <select 
               value={order.status}
               disabled={isUpdating}
@@ -117,7 +120,10 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
               <option value="DELIVERED">Delivered</option>
               <option value="CANCELLED">Cancelled</option>
             </select>
-            <button className="bg-brand-black text-brand-white px-6 py-2.5 rounded-brand font-bold text-xs uppercase tracking-widest hover:bg-brand-charcoal transition-colors">
+            <button 
+              onClick={() => window.print()}
+              className="bg-brand-black text-brand-white px-6 py-2.5 rounded-brand font-bold text-xs uppercase tracking-widest hover:bg-brand-charcoal transition-colors"
+            >
               Print Invoice
             </button>
           </div>
