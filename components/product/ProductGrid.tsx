@@ -9,7 +9,7 @@ interface ProductGridProps {
   className?: string;
 }
 
-export function ProductGrid({ products, className = "grid gap-x-6 gap-y-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" }: ProductGridProps) {
+export function ProductGrid({ products, className = "grid gap-x-6 gap-y-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4" }: ProductGridProps) {
   if (!products.length) return null;
 
   // Key changes when the product list changes, forcing React to remount

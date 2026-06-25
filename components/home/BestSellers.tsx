@@ -10,7 +10,7 @@ export function BestSellers({ products = mockProducts }: { products?: any[] }) {
   }
 
   return (
-    <section className="py-section px-2 sm:px-4 md:px-8 max-w-7xl mx-auto bg-brand-ivory-light/50 rounded-brand-xl my-8">
+    <section className="py-section px-2 sm:px-4 md:px-8 w-full bg-brand-ivory-light/50 rounded-brand-xl my-8">
       <div className="flex justify-between items-end mb-10 px-2 sm:px-0">
         <div>
           <h2 className="text-heading-lg font-heading text-brand-black">Best Sellers</h2>
