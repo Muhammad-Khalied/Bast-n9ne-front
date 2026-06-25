@@ -28,7 +28,7 @@ export function RevenueChart({ data, onPeriodChange }: RevenueChartProps) {
     onPeriodChange?.(period);
   };
 
-  const formatCurrency = (value: number) => `$${(value / 1000).toFixed(1)}k`;
+  const formatCurrency = (value: number) => `EGP ${(value / 1000).toFixed(1)}k`;
   const formatDate = (date: string) => {
     const d = new Date(date);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -88,7 +88,7 @@ export function RevenueChart({ data, onPeriodChange }: RevenueChartProps) {
                 color: '#f5f0eb',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [`$${value.toFixed(2)}`, 'Revenue']}
+              formatter={(value: number) => [`EGP ${value.toFixed(2)}`, 'Revenue']}
               labelFormatter={formatDate}
             />
             <Area

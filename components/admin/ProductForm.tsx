@@ -104,7 +104,7 @@ export function ProductForm({ productId }: ProductFormProps) {
         await api.patch(`/admin/products/${productId}`, data);
         toast.success("Product updated successfully");
       } else {
-        const res = await api.post("/admin/products", data);
+        const res = await api.post("/admin/products", { ...data, media });
         const newProductId = res.data.data.id;
         
         // If we have media that was uploaded "loose" (rare case with this logic but good for robustness)
@@ -256,7 +256,7 @@ export function ProductForm({ productId }: ProductFormProps) {
               </div>
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-brand-muted mb-2">Regular Price ($)</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-brand-muted mb-2">Regular Price (EGP)</label>
                   <Input
                     required
                     type="number"
@@ -267,7 +267,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-brand-muted mb-2">Discount Price ($)</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-brand-muted mb-2">Discount Price (EGP)</label>
                   <Input
                     type="number"
                     step="0.01"
