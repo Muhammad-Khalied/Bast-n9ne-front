@@ -47,18 +47,18 @@ export function FeaturedCategories() {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full"
       >
         {displayCategories.map((category) => (
-          <motion.div key={category.id} variants={fadeInUp} className="group relative aspect-[2/3] overflow-hidden bg-brand-ivory-light">
+          <motion.div key={category.id} variants={fadeInUp} className="group relative aspect-square overflow-hidden rounded-2xl bg-brand-ivory-light">
             <Link href={`/products?category=${category.slug}`} className="absolute inset-0 z-10 block" />
             <div 
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-[800ms] ease-out group-hover:scale-105"
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-[800ms] ease-out group-hover:scale-110"
               style={{ backgroundImage: `url('${category.image || DEFAULT_CATEGORY_IMAGE}')` }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 via-brand-black/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col items-start justify-end h-full">
-              <h3 className="text-heading-md font-heading text-brand-white mb-2 transform transition-transform duration-500 group-hover:-translate-y-2">{category.name}</h3>
-              <div className="overflow-hidden">
-                <p className="text-xs font-bold tracking-widest uppercase text-brand-sage transform translate-y-full transition-transform duration-500 group-hover:translate-y-0">
-                  Shop Collection
+            <div className="absolute inset-0 bg-brand-black/30 group-hover:bg-brand-black/50 transition-colors duration-500" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+              <h3 className="text-heading-md font-heading text-brand-white mb-3 transform transition-transform duration-500 group-hover:-translate-y-2">{category.name}</h3>
+              <div className="overflow-hidden h-6">
+                <p className="text-xs font-bold tracking-widest uppercase text-brand-sage transform translate-y-full opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                  Explore Collection
                 </p>
               </div>
             </div>
