@@ -79,15 +79,38 @@ export function ProductForm({ productId }: ProductFormProps) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setIsLoading(true);
     
+    if (!form.title) {
+      toast.error("Please enter a product title");
+      return;
+    }
+    if (!form.price || Number(form.price) <= 0) {
+      toast.error("Please enter a valid price");
+      return;
+    }
+    if (!form.categoryId) {
+      toast.error("Please select a category");
+      return;
+    }
+    if (variants.length === 0) {
+      toast.error("Please add at least one variant");
+      return;
+    }
+    const invalidVariants = variants.some(v => !v.size || v.stock === undefined || v.stock === null || v.stock < 0);
+    if (invalidVariants) {
+      toast.error("Please ensure all variants have a size and valid stock amount");
+      return;
+    }
+
+    setIsLoading(true);
     // Prepare data for API
     const data = {
       ...form,
       sizes: form.sizes.split(",").map((s: string) => s.trim()).filter(Boolean),
       tags: form.tags.split(",").map((t: string) => t.trim()).filter(Boolean),
-      // Infer colors from variants
-      colors: Array.from(new Set(variants.map(v => v.color))).filter(Boolean).map(name => {
+      // Infer colors from variants, allowing empty names
+      colors: Array.from(new Set(variants.map(v => v.color))).map(name => {
+        if (!name) return { name: "", hex: "#000000" };
         const variantWithColor = variants.find(v => v.color === name);
         const found = PRODUCT_COLORS.find(c => c.name.toLowerCase() === name.toLowerCase());
         const hex = variantWithColor?.colorHex || (found ? found.hex : "#000000");

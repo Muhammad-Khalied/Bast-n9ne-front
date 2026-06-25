@@ -28,7 +28,7 @@ interface ProductInfoProps {
 
 export function ProductInfo({ product }: ProductInfoProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(product.colors?.[0]?.name || null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(product.colors?.[0]?.name ?? null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "details" | "shipping">("description");
   
@@ -160,7 +160,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {product.colors && product.colors.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold tracking-wide uppercase text-brand-black">Color: <span className="text-brand-muted font-normal capitalize">{selectedColor}</span></span>
+            <span className="text-sm font-semibold tracking-wide uppercase text-brand-black">Color: <span className="text-brand-muted font-normal capitalize">{selectedColor || "Standard"}</span></span>
           </div>
           <div className="flex gap-3">
             {product.colors.map((color) => {
@@ -168,14 +168,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
               const hasStockForColor = product.variants?.some(v => v.color === color.name && v.stock > 0);
               return (
                 <button
-                  key={color.name}
+                  key={color.name || "standard"}
                   onClick={() => handleColorChange(color.name)}
                   disabled={!hasStockForColor}
                   className={`w-10 h-10 rounded-full border shadow-sm transition-transform flex items-center justify-center ${
                     selectedColor === color.name ? "border-brand-black ring-2 ring-offset-2 ring-brand-black" : "border-brand-ivory-dark hover:scale-110"
                   } ${!hasStockForColor ? "opacity-30 cursor-not-allowed" : ""}`}
                   style={{ backgroundColor: color.hex }}
-                  title={color.name}
+                  title={color.name || "Standard"}
                 />
               );
             })}
@@ -183,7 +183,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
         </div>
       )}
 
-      {availableSizes.length > 1 && (
+      {availableSizes.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold tracking-wide uppercase text-brand-black">Size</span>
@@ -191,7 +191,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
             {availableSizes.map((size) => (
               <button
-                key={size}
+                key={size || "default"}
                 onClick={() => setSelectedSize(size)}
                 className={`h-12 flex items-center justify-center border text-sm font-medium transition-colors ${
                   selectedSize === size 
@@ -199,7 +199,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                     : "border-brand-ivory-dark bg-brand-white text-brand-charcoal hover:border-brand-sage hover:text-brand-sage"
                 }`}
               >
-                {size}
+                {size || "Standard"}
               </button>
             ))}
           </div>
