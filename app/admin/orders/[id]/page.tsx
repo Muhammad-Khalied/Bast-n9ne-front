@@ -42,8 +42,8 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
       await api.patch(`/admin/orders/${params.id}/status`, { status: newStatus });
       toast.success(`Order updated to ${newStatus}`);
       fetchOrder();
-    } catch {
-      toast.error("Failed to update status");
+    } catch (error: any) {
+      toast.error(error.response?.data?.error?.message || "Failed to update status");
     } finally {
       setIsUpdating(false);
     }
@@ -55,8 +55,8 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
       await api.patch(`/admin/orders/${params.id}/status`, { paymentStatus: newPaymentStatus });
       toast.success(`Payment updated to ${newPaymentStatus}`);
       fetchOrder();
-    } catch {
-      toast.error("Failed to update payment status");
+    } catch (error: any) {
+      toast.error(error.response?.data?.error?.message || "Failed to update payment status");
     } finally {
       setIsUpdating(false);
     }
