@@ -35,8 +35,8 @@ export default function AdminProductsPage() {
       await api.delete(`/admin/products/${id}`);
       toast.success("Product deleted");
       fetchProducts();
-    } catch (error) {
-      toast.error("Failed to delete product");
+    } catch (error: any) {
+      toast.error(error.response?.data?.error?.message || "Failed to delete product");
     }
   };
 
