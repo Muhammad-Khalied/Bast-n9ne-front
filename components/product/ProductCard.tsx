@@ -118,22 +118,22 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.title}
           </h3>
         </Link>
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex flex-wrap justify-between items-center mt-3 gap-y-2 gap-x-4">
           <PriceDisplay price={Number(product.price)} discountPrice={product.discountPrice ?? undefined} />
           
           {/* Colors */}
           {product.colors && Array.isArray(product.colors) && product.colors.length > 0 && (
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 shrink-0">
               {product.colors.slice(0, 4).map((color: any, i: number) => (
                 <div 
                   key={i} 
-                  className="w-3.5 h-3.5 rounded-full border border-brand-ivory-dark shadow-sm"
+                  className="w-4 h-4 rounded-full border border-brand-ivory-dark shadow-sm"
                   style={{ backgroundColor: color.hex }}
                   title={color.name}
                 />
               ))}
               {product.colors.length > 4 && (
-                <span className="text-[10px] text-brand-muted ml-0.5">+{product.colors.length - 4}</span>
+                <span className="text-[10px] text-brand-muted ml-0.5 flex items-center">+{product.colors.length - 4}</span>
               )}
             </div>
           )}
