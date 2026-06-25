@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "../../../../lib/api";
 import { Loader2, Shield, User } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState<any>(null);
