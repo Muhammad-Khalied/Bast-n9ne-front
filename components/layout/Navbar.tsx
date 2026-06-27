@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, Heart, User, ShoppingBag, Menu } from "lucide-react";
+import { Search, Heart, User, ShoppingBag, Menu, Sparkles } from "lucide-react";
 
 import { useCartStore } from "../../store/cartStore";
 import { useUIStore } from "../../store/uiStore";
@@ -85,6 +85,9 @@ export function Navbar() {
               </Link>
             ))}
             <Link href="/products?category=all" className={`transition-colors ${hoverClass}`}>Shop All</Link>
+            <Link href="/ai-designer" className={`transition-colors text-brand-sage font-bold flex items-center gap-1.5 hover:text-brand-sage-dark`}>
+              <Sparkles className="w-4 h-4" /> AI Designer
+            </Link>
           </nav>
 
           {/* Icons */}

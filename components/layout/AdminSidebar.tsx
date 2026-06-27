@@ -11,7 +11,8 @@ import {
   Package, 
   BarChart3,
   Settings,
-  ExternalLink
+  ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -23,6 +24,7 @@ const menuItems = [
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Inventory", href: "/admin/inventory", icon: Package },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { label: "AI Designer", href: "/admin/ai-designer", icon: Sparkles },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

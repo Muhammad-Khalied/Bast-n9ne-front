@@ -19,8 +19,22 @@ export interface CartItem {
   };
 }
 
+export interface CustomCartItem {
+  id: string;
+  quantity: number;
+  unitPrice: number;
+  design: {
+    id: string;
+    prompt: string;
+    imageUrl: string;
+    shirtColor: string;
+    size: string;
+  };
+}
+
 interface CartState {
   items: CartItem[];
+  customItems: CustomCartItem[];
   itemCount: number;
   subtotal: number;
   isLoading: boolean;
@@ -28,21 +42,31 @@ interface CartState {
   addItem: (productId: string, variantId: string, qty: number) => Promise<void>;
   updateQuantity: (itemId: string, qty: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
+  updateCustomQuantity: (itemId: string, qty: number) => Promise<void>;
+  removeCustomItem: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
 }
 
-const computeTotals = (items: CartItem[]) => {
-  const subtotal = items.reduce(
+const computeTotals = (items: CartItem[], customItems: CustomCartItem[]) => {
+  const regularSubtotal = items.reduce(
     (sum, item) =>
       sum + Number(item.product.discountPrice ?? item.product.price) * item.quantity,
     0
   );
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const customSubtotal = customItems.reduce(
+    (sum, item) => sum + Number(item.unitPrice) * item.quantity,
+    0
+  );
+  const subtotal = regularSubtotal + customSubtotal;
+  const regularCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const customCount = customItems.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = regularCount + customCount;
   return { subtotal, itemCount };
 };
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
+  customItems: [],
   itemCount: 0,
   subtotal: 0,
   isLoading: false,
@@ -50,17 +74,18 @@ export const useCartStore = create<CartState>((set, get) => ({
     // Don't fetch if user is not authenticated
     const token = getAccessToken();
     if (!token) {
-      set({ items: [], subtotal: 0, itemCount: 0, isLoading: false });
+      set({ items: [], customItems: [], subtotal: 0, itemCount: 0, isLoading: false });
       return;
     }
     set({ isLoading: true });
     try {
       const response = await api.get("/cart");
       const items = response.data.data?.items ?? [];
-      const { subtotal, itemCount } = computeTotals(items);
-      set({ items, subtotal, itemCount, isLoading: false });
+      const customItems = response.data.data?.customItems ?? [];
+      const { subtotal, itemCount } = computeTotals(items, customItems);
+      set({ items, customItems, subtotal, itemCount, isLoading: false });
     } catch {
-      set({ items: [], subtotal: 0, itemCount: 0, isLoading: false });
+      set({ items: [], customItems: [], subtotal: 0, itemCount: 0, isLoading: false });
     }
   },
   addItem: async (productId, variantId, qty) => {
@@ -98,12 +123,34 @@ export const useCartStore = create<CartState>((set, get) => ({
       throw error;
     }
   },
+  updateCustomQuantity: async (itemId, qty) => {
+    await api.patch(`/ai/cart/${itemId}`, { quantity: qty });
+    await get().fetchCart();
+  },
+  removeCustomItem: async (itemId) => {
+    const currentCustomItems = get().customItems;
+    const itemToRemove = currentCustomItems.find(i => i.id === itemId);
+    if (itemToRemove) {
+      const currentCount = get().itemCount;
+      set({
+        itemCount: Math.max(0, currentCount - itemToRemove.quantity),
+        customItems: currentCustomItems.filter(i => i.id !== itemId),
+      });
+    }
+    try {
+      await api.delete(`/ai/cart/${itemId}`);
+      await get().fetchCart();
+    } catch (error) {
+      await get().fetchCart(); // revert
+      throw error;
+    }
+  },
   clearCart: async () => {
     try {
       await api.delete("/cart");
     } catch {
       // ignore if cart doesn't exist
     }
-    set({ items: [], itemCount: 0, subtotal: 0 });
+    set({ items: [], customItems: [], itemCount: 0, subtotal: 0 });
   },
 }));

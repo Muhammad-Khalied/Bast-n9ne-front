@@ -2,23 +2,27 @@
 
 import { useCartStore } from '@/store/cartStore';
 import Image from 'next/image';
-import { Package, Truck, Loader2 } from 'lucide-react';
+import { Package, Truck, Loader2, Sparkles } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useCheckoutStore } from '@/store/checkoutStore';
 
 export function OrderSummary() {
-  const { items, isLoading } = useCartStore();
+  const { items, customItems, isLoading } = useCartStore();
 
   const { hasAddress } = useCheckoutStore();
 
-  const subtotal = items.reduce((sum, item) => {
+  const regularSubtotal = items.reduce((sum, item) => {
     const price = (item as any).product?.discountPrice || (item as any).product?.price || 0;
     return sum + Number(price) * item.quantity;
   }, 0);
+  const customSubtotal = customItems.reduce((sum, item) => {
+    return sum + Number(item.unitPrice) * item.quantity;
+  }, 0);
+  const subtotal = regularSubtotal + customSubtotal;
   const shipping = 150;
   const total = subtotal + (hasAddress ? shipping : 0);
 
-  if (isLoading && items.length === 0) {
+  if (isLoading && items.length === 0 && customItems.length === 0) {
     return (
       <div className="bg-white border border-brand-ivory-dark rounded-brand-lg overflow-hidden flex items-center justify-center py-12">
         <Loader2 className="w-6 h-6 animate-spin text-brand-sage" />
@@ -34,6 +38,7 @@ export function OrderSummary() {
 
       {/* Items */}
       <div className="divide-y divide-brand-ivory-dark">
+        {/* Regular items */}
         {items.map((item) => {
           const product = (item as any).product;
           const variant = (item as any).variant;
@@ -66,6 +71,35 @@ export function OrderSummary() {
             </div>
           );
         })}
+
+        {/* Custom AI T-Shirt items */}
+        {customItems.map((item) => (
+          <div key={`custom-${item.id}`} className="flex gap-4 p-5">
+            <div className="w-16 h-20 relative rounded-brand bg-brand-ivory-light overflow-hidden flex-shrink-0">
+              <Image
+                src={item.design.imageUrl}
+                alt="Custom AI Design"
+                fill
+                className="object-contain p-1"
+              />
+              <div className="absolute top-1 left-1">
+                <Sparkles className="w-3 h-3 text-brand-sage" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-brand-black truncate flex items-center gap-1">
+                Custom AI T-Shirt
+              </p>
+              <p className="text-xs text-brand-muted mt-1">
+                Size: {item.design.size} · Color: {item.design.shirtColor}
+              </p>
+              <p className="text-xs text-brand-muted">Qty: {item.quantity}</p>
+            </div>
+            <p className="text-sm font-medium text-brand-black whitespace-nowrap">
+              {formatPrice(Number(item.unitPrice) * item.quantity)}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Totals */}

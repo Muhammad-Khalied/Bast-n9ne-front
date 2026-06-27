@@ -138,9 +138,10 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
               <h3 className="font-bold text-brand-black flex items-center gap-2">
                 <Package className="w-4 h-4 text-brand-sage" /> Order Items
               </h3>
-              <span className="text-[10px] font-bold text-brand-muted uppercase">{order.items?.length || 0} items</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase">{(order.items?.length || 0) + (order.customItems?.length || 0)} items</span>
             </div>
             <div className="divide-y divide-brand-ivory">
+              {/* Regular items */}
               {order.items?.map((item: any) => (
                 <div key={item.id} className="p-6 flex gap-4">
                   <div className="relative w-16 h-20 bg-brand-ivory rounded overflow-hidden flex-shrink-0">
@@ -155,6 +156,31 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
                     </div>
                     <p className="text-xs text-brand-muted mb-2">Size: {item.variant?.size} | Color: {item.variant?.color}</p>
                     <p className="text-xs text-brand-charcoal">Qty: {item.quantity} × EGP {Number(item.price).toFixed(2)}</p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Custom AI T-Shirt items */}
+              {order.customItems?.map((item: any) => (
+                <div key={`custom-${item.id}`} className="p-6 flex gap-4">
+                  <div className="relative w-16 h-20 bg-brand-ivory rounded overflow-hidden flex-shrink-0">
+                    <Image src={item.imageUrl} alt={item.title} fill className="object-contain p-1" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <p className="text-sm font-bold text-brand-black">{item.title}</p>
+                      <p className="text-sm font-bold text-brand-black">EGP {(Number(item.price) * item.quantity).toFixed(2)}</p>
+                    </div>
+                    <p className="text-xs text-brand-muted mb-1">Size: {item.size} | Color: {item.shirtColor}</p>
+                    <div className="bg-brand-ivory-light p-2 rounded text-[10px] text-brand-charcoal italic mb-2">
+                      <span className="font-bold mr-1">Prompt:</span>{item.prompt}
+                    </div>
+                    <div className="flex justify-between items-end">
+                      <p className="text-xs text-brand-charcoal">Qty: {item.quantity} × EGP {Number(item.price).toFixed(2)}</p>
+                      <a href={item.design?.imageUrl || item.imageUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold uppercase tracking-widest text-brand-sage hover:text-brand-sage-dark flex items-center gap-1">
+                        Download Design <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}

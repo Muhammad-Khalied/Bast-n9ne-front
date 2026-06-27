@@ -34,6 +34,7 @@ export function CheckoutForm() {
   const router = useRouter();
   const { user } = useAuthStore();
   const { items, clearCart } = useCartStore();
+  const customItems = useCartStore((state) => state.customItems);
   const [currentStep, setCurrentStep] = useState(1);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -116,7 +117,7 @@ export function CheckoutForm() {
   const subtotal = items.reduce((sum, item) => {
     const price = (item as any).product?.discountPrice || (item as any).product?.price || 0;
     return sum + Number(price) * item.quantity;
-  }, 0);
+  }, 0) + customItems.reduce((sum, item) => sum + Number(item.unitPrice) * item.quantity, 0);
   const shipping = 150;
   const total = subtotal + shipping;
 
@@ -140,7 +141,7 @@ export function CheckoutForm() {
         ))}
       </div>
 
-      {items.length === 0 ? (
+      {items.length === 0 && customItems.length === 0 ? (
         <div className="text-center py-12">
           <h2 className="text-heading-md font-heading text-brand-black mb-4">Your cart is empty</h2>
           <button onClick={() => router.push('/products')} className="px-6 py-3 bg-brand-sage text-white rounded-brand hover:bg-brand-sage-dark">

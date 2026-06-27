@@ -65,7 +65,7 @@ export default function OrderDetailPage({ params }: PageProps) {
           <div className="rounded-brand-lg bg-brand-white border border-brand-ivory-dark overflow-hidden shadow-sm">
             <div className="p-5 border-b border-brand-ivory-dark bg-brand-ivory/20 flex items-center gap-3">
               <Package className="w-5 h-5 text-brand-sage" />
-              <h2 className="font-heading text-heading-sm text-brand-black">Items ({order.items?.length || 0})</h2>
+              <h2 className="font-heading text-heading-sm text-brand-black">Items ({(order.items?.length || 0) + (order.customItems?.length || 0)})</h2>
             </div>
             <div className="divide-y divide-brand-ivory-dark">
               {order.items?.map((item: any) => {
@@ -95,6 +95,31 @@ export default function OrderDetailPage({ params }: PageProps) {
                   </div>
                 );
               })}
+
+              {/* Custom AI T-Shirt items */}
+              {order.customItems?.map((item: any) => (
+                <div key={`custom-${item.id}`} className="flex gap-4 p-5 hover:bg-brand-ivory/5 transition-colors">
+                  <div className="w-20 h-24 relative rounded-brand bg-brand-ivory-light overflow-hidden flex-shrink-0 border border-brand-ivory-dark">
+                    <Image src={item.imageUrl} alt={item.title} fill className="object-contain p-1" />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-medium text-brand-black line-clamp-1">{item.title}</h3>
+                      <p className="text-xs text-brand-muted mt-1 space-x-2">
+                        <span>Size: {item.size}</span>
+                        <span>Color: {item.shirtColor}</span>
+                      </p>
+                      <div className="bg-brand-ivory-light p-2 rounded text-[10px] text-brand-charcoal italic mt-2">
+                        <span className="font-bold mr-1">Prompt:</span>{item.prompt}
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-sm text-brand-charcoal">Qty: {item.quantity}</span>
+                      <span className="font-medium text-brand-black">{formatPrice(item.price * item.quantity)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -107,11 +132,11 @@ export default function OrderDetailPage({ params }: PageProps) {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-brand-charcoal">
                 <span>Subtotal</span>
-                <span>{formatPrice(order.items?.reduce((sum: number, i: any) => sum + Number(i.price) * i.quantity, 0) || 0)}</span>
+                <span>{formatPrice((order.items?.reduce((sum: number, i: any) => sum + Number(i.price) * i.quantity, 0) || 0) + (order.customItems?.reduce((sum: number, i: any) => sum + Number(i.price) * i.quantity, 0) || 0))}</span>
               </div>
               <div className="flex justify-between text-brand-charcoal">
                 <span>Shipping</span>
-                <span>{formatPrice(order.total - (order.items?.reduce((sum: number, i: any) => sum + Number(i.price) * i.quantity, 0) || 0))}</span>
+                <span>{formatPrice(order.total - ((order.items?.reduce((sum: number, i: any) => sum + Number(i.price) * i.quantity, 0) || 0) + (order.customItems?.reduce((sum: number, i: any) => sum + Number(i.price) * i.quantity, 0) || 0)))}</span>
               </div>
               <div className="pt-3 mt-3 border-t border-brand-ivory-dark flex justify-between font-medium text-brand-black text-base">
                 <span>Total</span>

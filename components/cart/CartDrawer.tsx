@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingBag, ArrowRight, Minus, Plus, Trash2 } from 'lucide-react';
+import { X, ShoppingBag, ArrowRight, Minus, Plus, Trash2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUIStore } from '@/store/uiStore';
@@ -11,12 +11,14 @@ import { useRouter } from 'next/navigation';
 
 export default function CartDrawer() {
   const { isCartDrawerOpen, toggleCartDrawer } = useUIStore();
-  const { items, updateQuantity, removeItem } = useCartStore();
+  const { items, customItems, updateQuantity, removeItem, updateCustomQuantity, removeCustomItem } = useCartStore();
 
   const subtotal = items.reduce((sum, item) => {
     const price = (item as any).product?.discountPrice || (item as any).product?.price || 0;
     return sum + Number(price) * item.quantity;
-  }, 0);
+  }, 0) + customItems.reduce((sum, item) => sum + Number(item.unitPrice) * item.quantity, 0);
+
+  const totalItems = items.length + customItems.length;
 
   const handleClose = () => {
     if (useUIStore.getState().isCartDrawerOpen) {
@@ -50,7 +52,7 @@ export default function CartDrawer() {
           <div className="flex items-center justify-between p-5 border-b border-brand-ivory-dark">
             <h2 className="font-heading text-heading-sm text-brand-black flex items-center gap-2">
               <ShoppingBag className="w-5 h-5" />
-              Cart ({items.length})
+              Cart ({totalItems})
             </h2>
             <button
               onClick={handleClose}
@@ -61,7 +63,7 @@ export default function CartDrawer() {
           </div>
 
           {/* Items */}
-          {items.length === 0 ? (
+          {totalItems === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
               <ShoppingBag className="w-12 h-12 text-brand-muted mb-4" />
               <p className="font-heading text-heading-sm text-brand-black mb-2">Your cart is empty</p>
@@ -77,6 +79,7 @@ export default function CartDrawer() {
           ) : (
             <>
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                {/* Regular items */}
                 {items.map((item) => {
                 const product = (item as any).product;
                 const variant = (item as any).variant;
@@ -131,6 +134,64 @@ export default function CartDrawer() {
                     </motion.div>
                   );
                 })}
+
+                {/* Custom AI T-Shirt items */}
+                {customItems.map((item) => (
+                  <motion.div
+                    key={`custom-${item.id}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex gap-4"
+                  >
+                    <div className="w-20 h-24 relative rounded-brand bg-brand-ivory-light overflow-hidden flex-shrink-0">
+                      <Image
+                        src={item.design.imageUrl}
+                        alt="Custom AI Design"
+                        fill
+                        className="object-contain p-1"
+                      />
+                      <div className="absolute top-1 left-1">
+                        <Sparkles className="w-3 h-3 text-brand-sage" />
+                      </div>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-brand-black truncate flex items-center gap-1">
+                        Custom AI T-Shirt
+                      </p>
+                      <p className="text-xs text-brand-muted mt-0.5">
+                        {item.design.size} · {item.design.shirtColor}
+                      </p>
+                      <p className="text-sm font-medium text-brand-black mt-1">
+                        {formatPrice(Number(item.unitPrice))}
+                      </p>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center border border-brand-ivory-dark rounded-brand">
+                          <button
+                            onClick={() => updateCustomQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            className="p-1.5 hover:bg-brand-ivory-light transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="px-3 text-sm font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() => updateCustomQuantity(item.id, item.quantity + 1)}
+                            className="p-1.5 hover:bg-brand-ivory-light transition-colors"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => removeCustomItem(item.id)}
+                          className="p-1.5 text-brand-muted hover:text-status-error transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
 
               {/* Footer */}
